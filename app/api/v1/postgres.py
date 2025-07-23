@@ -22,6 +22,7 @@ def restore_dump(req: RestoreRequest):
         backup_service.restore_dump(req.config, req.file_path)
         return {"message": "Restore successful"}
     except Exception as e:
+        # This will catch both DB creation and restore errors
         raise HTTPException(status_code=500, detail=f"Restore failed: {e}")
 
 @router.post("/databases")

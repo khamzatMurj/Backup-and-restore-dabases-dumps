@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class DBConfig(BaseModel):
+class MySQLConfig(BaseModel):
     host: str
     port: int
     user: str
@@ -11,9 +11,9 @@ class DBConfig(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "host": "192.168.8.2",
-                    "port": 5432,
-                    "user": "postgres",
+                    "host": "localhost",
+                    "port": 3306,
+                    "user": "root",
                     "dbname": "employees",
                     "password": "root"
                 }
@@ -21,21 +21,19 @@ class DBConfig(BaseModel):
         }
     }
 
-
-class RestoreRequest(BaseModel):
-    config: DBConfig
+class MySQLRestoreRequest(MySQLConfig):
     file_path: str
 
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "host": "192.168.8.2",
-                    "port": 5432,
-                    "user": "postgres",
+                    "host": "localhost",
+                    "port": 3306,
+                    "user": "root",
                     "dbname": "employees",
                     "password": "root",
-                    "file_path": "/tmp/dumps/employees-dump-2025-07-23.sql"
+                    "file_path": "/tmp/dumps/employees-mysql-dump-2025-07-23.sql"
                 }
             ]
         }

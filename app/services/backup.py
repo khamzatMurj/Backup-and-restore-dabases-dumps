@@ -2,6 +2,7 @@ import os
 import subprocess
 import datetime
 from app.models.db_config import DBConfig
+import psycopg2
 
 DUMP_DIR = "/tmp/dumps"
 os.makedirs(DUMP_DIR, exist_ok=True)
@@ -27,6 +28,25 @@ class BackupService:
     def restore_dump(self, config: DBConfig, file_path: str):
         if not os.path.exists(file_path):
             raise FileNotFoundError("Dump file not found")
+
+        # Check if database exists, create if not
+        try:
+            conn = psycopg2.connect(
+                host=config.host,
+                port=config.port,
+                user=config.user,
+                password=config.password,
+                dbname='postgres'
+            )
+            conn.autocommit = True
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1 FROM pg_database WHERE datname = %s", (config.dbname,))
+                exists = cur.fetchone()
+                if not exists:
+                    cur.execute(f'CREATE DATABASE "{config.dbname}"')
+            conn.close()
+        except Exception as e:
+            raise Exception(f"Failed to check or create database: {e}")
 
         with open(file_path, 'r') as dump_file:
             subprocess.run([
