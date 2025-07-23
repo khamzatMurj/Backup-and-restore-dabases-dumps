@@ -7,5 +7,6 @@ class DBConfig(BaseModel):
     dbname: str
     password: str
 
-class RestoreRequest(DBConfig):
+class RestoreRequest(BaseModel):
+    config: DBConfig
     file_path: str
